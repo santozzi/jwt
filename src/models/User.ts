@@ -17,8 +17,8 @@ const userSchema = new Schema ({
     },
     password:{
         type:String,
-        required:true,
-        lowercase:true
+        required:true
+       
     },
     email:{
         type:String,
@@ -27,11 +27,21 @@ const userSchema = new Schema ({
     }
 });
 userSchema.methods.encryptPassword = async(password:string):Promise<string> => {
-    const salt = await bcrypt.genSalt(10);
-    return await bcrypt.hash(password,salt);
+   
+    return await bcrypt.hash(password,10);
 }
 
-userSchema.methods.validatePassword = async function(password:string):Promise<boolean>{
-    return await bcrypt.compare(password,this.password);
+userSchema.methods.validatePassword = async function(password:string){
+
+    const result =  bcrypt.compare(password,this.password,(err,res) => {
+        console.log("res",res);
+        console.log("err",err);
+        
+        
+        return res;
+    });
+   
+    
+   
 }
 export default model<IUser>('User',userSchema);
