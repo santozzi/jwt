@@ -40,9 +40,18 @@ export const signin = async (req:Request,res:Response) => {
     
    
    }
-   res.send('Signin'); 
-}
+    const token:string = jwt.sign({_id:user._id},'secretkey',{
+        //expira en 24 horas
+        expiresIn:60*60*24
+    });
+   res.header('auth-token', token).json(user); 
+} 
 
-export const profile = (req:Request,res:Response) => {
-    res.send('Profile');
+export const profile = async(req:Request,res:Response) => {
+   const user = await User.findById(req.userId);
+    if(!user){ 
+         res.status(404).json('No user found');
+         return;
+    }
+    res.json(user);
 }
